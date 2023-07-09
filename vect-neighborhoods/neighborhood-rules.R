@@ -232,3 +232,105 @@ neigh_diagonal <- function(in_mat, n_row, n_col, depth){
   return(neigh_list)
 
 }
+
+## S-shaped neighborhood ----
+
+neigh_shapeS <- function(in_mat, n_row, n_col, depth){
+  # Neighbors are all the cells two square matrices of side "depth", extending in the upper-right and bottom-left corner from a given cell.
+  # Implementing rule:
+  # - shift world matrix horizontally from -"depth" to "depth" (excluding 0)
+  # - for each left-shift, apply down-shift from -1 to -"depth". For a right-shift, apply an up-shift from 1 to "depth"
+  # Input:
+  # - "in_mat": [matrix] input world matrix
+  # - "n_row": [integer] row number of "in_mat"
+  # - "n_col": [integer] col number of "in_mat"
+  # - "depth": [integer] indicates distance at which cells are considered neighbors
+  # Output:
+  # - "neigh_list": [list] containing all shifted matrices, such that, for a given cell "c", 
+  #   each matrix contains one of the neighbors of "c" at the location of "c" in the input world matrix.
+  
+  h_depth_vect <- c(-depth:-1, 1:depth)  # vector with horizontal shifts (exclude 0)
+  
+  # For each horizontal shift, define vector of vertical shifts.
+  # From -1 to -"depth" for left-shift. From 1 to "depth" for right-shift.
+  v_depth_vect <- lapply(
+    h_depth_vect,
+    function(x){
+       if(x<0){
+         -depth:-1
+       } else if(x>0){
+         1:depth
+       }
+      }
+  )
+  
+  # Shift world matrix:
+  neigh_list <- 
+    list_flatten(  # flatten all output into a single list
+      mapply(
+        vert_shift,  # apply vertical shift...
+        in_mat = hori_shift(  # ... to each horizontally shifted matrix
+          in_mat = in_mat,
+          n_row = n_row,
+          n_col = n_col,
+          depth_vec = h_depth_vect
+        ),
+        depth_vec = v_depth_vect,
+        MoreArgs = list(n_row = n_row, n_col = n_col)
+      )
+    )
+  
+  return(neigh_list)
+
+}
+
+## Inversed S-shaped neighborhood ----
+
+neigh_inv_shapeS <- function(in_mat, n_row, n_col, depth){
+  # Neighbors are all the cells two square matrices of side "depth", extending in the bottom-right and upper-left corner from a given cell.
+  # Implementing rule:
+  # - shift world matrix horizontally from -"depth" to "depth" (excluding 0)
+  # - for each left-shift, apply up-shift from 1 to "depth". For a right-shift, apply an down-shift from -1 to -"depth"
+  # Input:
+  # - "in_mat": [matrix] input world matrix
+  # - "n_row": [integer] row number of "in_mat"
+  # - "n_col": [integer] col number of "in_mat"
+  # - "depth": [integer] indicates distance at which cells are considered neighbors
+  # Output:
+  # - "neigh_list": [list] containing all shifted matrices, such that, for a given cell "c", 
+  #   each matrix contains one of the neighbors of "c" at the location of "c" in the input world matrix.
+  
+  h_depth_vect <- c(-depth:-1, 1:depth)  # vector with horizontal shifts (exclude 0)
+  
+  # For each horizontal shift, define vector of vertical shifts.
+  # From 1 to "depth" for left-shift. From -1 to -"depth" for right-shift.
+  v_depth_vect <- lapply(
+    h_depth_vect,
+    function(x){
+       if(x<0){
+         1:depth
+       } else if(x>0){
+         -depth:-1
+       }
+      }
+  )
+  
+  # Shift world matrix:
+  neigh_list <- 
+    list_flatten(  # flatten all output into a single list
+      mapply(
+        vert_shift,  # apply vertical shift...
+        in_mat = hori_shift(  # ... to each horizontally shifted matrix
+          in_mat = in_mat,
+          n_row = n_row,
+          n_col = n_col,
+          depth_vec = h_depth_vect
+        ),
+        depth_vec = v_depth_vect,
+        MoreArgs = list(n_row = n_row, n_col = n_col)
+      )
+    )
+  
+  return(neigh_list)
+
+}

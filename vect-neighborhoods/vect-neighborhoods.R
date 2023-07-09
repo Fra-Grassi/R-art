@@ -5,16 +5,16 @@
 # Libraries ----
 library(tidyverse)
 library(reshape2)
-source("tidy-neighborhoods/neighborhood-rules.R")
+source("vect-neighborhoods/neighborhood-rules.R")
 
 # Settings ----
 
 W <- 1000  # width of cell world
 H <- 1000  # height of cell world
 M <- 4  # maximum number of states allowed
-depth <- 8  # depth (in cell number) of neighbors count
-threshold <- 12  # min number of neighbors with state 1 unit greater than each cell
-iterations <- 100  # number of world evolution iterations
+depth <- 6  # depth (in cell number) of neighbors count
+threshold <- 20  # min number of neighbors with state 1 unit greater than each cell
+iterations <- 200  # number of world evolution iterations
 
 # Function to generate world matrix ----
 mat <- matrix(
@@ -38,6 +38,8 @@ count_neighbors <- function(mat, rule, depth) {
   #   - "moore"
   #   - "vonNeumann"
   #   - "diagonal"
+  #   - "shapeS"
+  #   - "inv_shapeS"
   # - "depth": [integer] indicates depth at which neighbors are checked
   # Output:
   # - "neigh_count": [matrix] with same dimensions as "mat", indicating for each cell the number of neighbors with state exactly 1 unit higher than the given cell
@@ -51,6 +53,10 @@ count_neighbors <- function(mat, rule, depth) {
     neigh_fun <- neigh_vonNeumann
   } else if(rule == "diagonal"){
     neigh_fun <- neigh_diagonal
+  } else if(rule == "shapeS"){
+    neigh_fun <- neigh_shapeS
+  } else if(rule == "inv_shapeS"){
+    neigh_fun <- neigh_inv_shapeS
   }
   
   # Find neighbors ----
@@ -122,7 +128,7 @@ for(i in 1:iterations){
   print(i)
   mat <- update_world(
     mat = mat,
-    rule = "diagonal",
+    rule = "inv_shapeS",
     depth = depth,
     threshold = threshold,
     M = M
@@ -136,7 +142,7 @@ for(i in 1:iterations){
 df <- melt(mat)
 colnames(df) <- c("x","y","v")
 
-cols <- c("#f2d0a9", "#f1e3d3", "#99c1b9", "#8e7dbe")  # color palette
+cols <- c("#ff6700", "#ebebeb", "#3a6ea5", "#004e98")  # color palette
 
 ggplot(data = df, aes(x = x, y = y, fill = v)) +
   geom_raster(interpolate = TRUE) +  # interpolate for a "smoother" look
@@ -149,4 +155,4 @@ ggplot(data = df, aes(x = x, y = y, fill = v)) +
     legend.position = "none"
   )
 
-ggsave("tidy-neighborhoods/imgs/test_diagonal-2.png", width = 2000, height = 2000, units = "px", dpi = 300)
+ggsave("vect-neighborhoods/imgs/test_inv_shapeS-1.png", width = 2000, height = 2000, units = "px", dpi = 300)
