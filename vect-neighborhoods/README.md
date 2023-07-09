@@ -18,6 +18,9 @@ At the moment, supported neighborhoods rules are:
 - Moore: square matrix around each cell
 - von Neumann: "diamond" shaped matrix around each cell
 - diagonal: cells along the two diagonals passing through a given cell
+- S-shape: square matrix in the upper-right and bottom-left corners around a giving cell
+- inversed S-shape: square matrix in the bottom-right and upper-left corners around a giving cell
+- cross: cells along the vertical and horizontal axis passing through a given cell
 
 For each rule, it's possible to set the "depth" (i.e. distance from a given cell) at which cells are considered neighbors.
 
