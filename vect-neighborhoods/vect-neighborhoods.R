@@ -12,8 +12,8 @@ source("vect-neighborhoods/neighborhood-rules.R")
 W <- 1000  # width of cell world
 H <- 1000  # height of cell world
 M <- 4  # maximum number of states allowed
-depth <- 6  # depth (in cell number) of neighbors count
-threshold <- 20  # min number of neighbors with state 1 unit greater than each cell
+depth <- 10  # depth (in cell number) of neighbors count
+threshold <- 15  # min number of neighbors with state 1 unit greater than each cell
 iterations <- 200  # number of world evolution iterations
 
 # Function to generate world matrix ----
@@ -44,21 +44,6 @@ count_neighbors <- function(mat, rule, depth) {
   # Output:
   # - "neigh_count": [matrix] with same dimensions as "mat", indicating for each cell the number of neighbors with state exactly 1 unit higher than the given cell
   
-  # Define neighborhood rule ----
-  
-  # Assign neighborhood rule based on user input:
-  if(rule == "moore"){
-    neigh_fun <- neigh_moore
-  } else if(rule == "vonNeumann"){
-    neigh_fun <- neigh_vonNeumann
-  } else if(rule == "diagonal"){
-    neigh_fun <- neigh_diagonal
-  } else if(rule == "shapeS"){
-    neigh_fun <- neigh_shapeS
-  } else if(rule == "inv_shapeS"){
-    neigh_fun <- neigh_inv_shapeS
-  }
-  
   # Find neighbors ----
   
   # Find world matrix dimensions:
@@ -66,7 +51,7 @@ count_neighbors <- function(mat, rule, depth) {
   n_col <- dim(mat)[[2]]
   
   # Create list of shifted matrices representing all neighbors of each cell of world matrix, according to specified rule:
-  neigh_list <- neigh_fun(mat, n_row, n_col, depth)
+  neigh_list <- neigh_fun(mat, rule, n_row, n_col, depth)
 
   # Check neighbors state ----
   
@@ -96,7 +81,7 @@ update_world <- function(mat, rule, depth, threshold, M){
   # Function to update world matrix.
   # Inputs:
   # - "mat": [matrix] world matrix
-  # - "rule": [character] neighborhood rule to use. Supported rules are: "moore"
+  # - "rule": [character] neighborhood rule to use. (See function "neigh_fun" for details)
   # - "depth": [integer] indicates depth at which neighbors are checked
   # - "threshold": [integer] minimum number of neighbors with value 1 unit higher than given cell, to update cell status
   # - "M": [integer] highest allowed value for cell state
@@ -128,7 +113,7 @@ for(i in 1:iterations){
   print(i)
   mat <- update_world(
     mat = mat,
-    rule = "inv_shapeS",
+    rule = "cross",
     depth = depth,
     threshold = threshold,
     M = M
@@ -142,7 +127,7 @@ for(i in 1:iterations){
 df <- melt(mat)
 colnames(df) <- c("x","y","v")
 
-cols <- c("#ff6700", "#ebebeb", "#3a6ea5", "#004e98")  # color palette
+cols <- c("#fe5d26", "#f2c078", "#c1dbb3", "#7ebc89")  # color palette
 
 ggplot(data = df, aes(x = x, y = y, fill = v)) +
   geom_raster(interpolate = TRUE) +  # interpolate for a "smoother" look
@@ -155,4 +140,4 @@ ggplot(data = df, aes(x = x, y = y, fill = v)) +
     legend.position = "none"
   )
 
-ggsave("vect-neighborhoods/imgs/test_inv_shapeS-1.png", width = 2000, height = 2000, units = "px", dpi = 300)
+ggsave("vect-neighborhoods/imgs/test_cross-2.png", width = 2000, height = 2000, units = "px", dpi = 300)
