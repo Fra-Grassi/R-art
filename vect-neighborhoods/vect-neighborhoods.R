@@ -12,8 +12,8 @@ source("vect-neighborhoods/neighborhood-rules.R")
 W <- 1000  # width of cell world
 H <- 1000  # height of cell world
 M <- 4  # maximum number of states allowed
-depth <- 10  # depth (in cell number) of neighbors count
-threshold <- 15  # min number of neighbors with state 1 unit greater than each cell
+depth <- 9  # depth (in cell number) of neighbors count
+threshold <- 30  # min number of neighbors with state 1 unit greater than each cell
 iterations <- 200  # number of world evolution iterations
 
 # Function to generate world matrix ----
@@ -113,7 +113,7 @@ for(i in 1:iterations){
   print(i)
   mat <- update_world(
     mat = mat,
-    rule = "cross",
+    rule = "blades",
     depth = depth,
     threshold = threshold,
     M = M
@@ -127,7 +127,7 @@ for(i in 1:iterations){
 df <- melt(mat)
 colnames(df) <- c("x","y","v")
 
-cols <- c("#fe5d26", "#f2c078", "#c1dbb3", "#7ebc89")  # color palette
+cols <- c("#ff6d00", "#ff7900", "#ff8500", "#ff9100")  # color palette
 
 ggplot(data = df, aes(x = x, y = y, fill = v)) +
   geom_raster(interpolate = TRUE) +  # interpolate for a "smoother" look
@@ -140,4 +140,4 @@ ggplot(data = df, aes(x = x, y = y, fill = v)) +
     legend.position = "none"
   )
 
-ggsave("vect-neighborhoods/imgs/test_cross-2.png", width = 2000, height = 2000, units = "px", dpi = 300)
+ggsave("vect-neighborhoods/imgs/test_blades-1.png", width = 2000, height = 2000, units = "px", dpi = 300)

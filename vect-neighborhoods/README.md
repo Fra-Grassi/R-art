@@ -21,6 +21,7 @@ At the moment, supported neighborhoods rules are:
 - S-shape: square matrix in the upper-right and bottom-left corners around a giving cell
 - inversed S-shape: square matrix in the bottom-right and upper-left corners around a giving cell
 - cross: cells along the vertical and horizontal axis passing through a given cell
+- blades: combination of "diagonal" and "S-shape". Cells along the bottom half of the bottom-left matrix, and the upper half of the upper-right matrix
 
 For each rule, it's possible to set the "depth" (i.e. distance from a given cell) at which cells are considered neighbors.
 
