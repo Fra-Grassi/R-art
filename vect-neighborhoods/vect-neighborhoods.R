@@ -13,8 +13,8 @@ W <- 1000  # width of cell world
 H <- 1000  # height of cell world
 M <- 4  # maximum number of states allowed
 depth <- 9  # depth (in cell number) of neighbors count
-threshold <- 14  # min number of neighbors with state 1 unit greater than each cell
-iterations <- 200  # number of world evolution iterations
+threshold <- 16  # min number of neighbors with state 1 unit greater than each cell
+iterations <- 100  # number of world evolution iterations
 
 # Function to generate world matrix ----
 mat <- matrix(
@@ -130,7 +130,7 @@ for(i in 1:iterations){
 df <- melt(mat)
 colnames(df) <- c("x","y","v")
 
-cols <- c("#ff6d00", "#ff7900", "#ff8500", "#ff9100")  # color palette
+cols <- c("#f15bb5", "#fee440", "#00bbf9", "#00f5d4")  # color palette
 
 ggplot(data = df, aes(x = x, y = y, fill = v)) +
   geom_raster(interpolate = TRUE) +  # interpolate for a "smoother" look
