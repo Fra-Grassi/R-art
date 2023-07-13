@@ -13,7 +13,7 @@ W <- 1000  # width of cell world
 H <- 1000  # height of cell world
 M <- 4  # maximum number of states allowed
 depth <- 9  # depth (in cell number) of neighbors count
-threshold <- 30  # min number of neighbors with state 1 unit greater than each cell
+threshold <- 14  # min number of neighbors with state 1 unit greater than each cell
 iterations <- 200  # number of world evolution iterations
 
 # Function to generate world matrix ----
@@ -40,6 +40,9 @@ count_neighbors <- function(mat, rule, depth) {
   #   - "diagonal"
   #   - "shapeS"
   #   - "inv_shapeS"
+  #   - "cross"
+  #   - "blades"
+  #   - "ex_square"
   # - "depth": [integer] indicates depth at which neighbors are checked
   # Output:
   # - "neigh_count": [matrix] with same dimensions as "mat", indicating for each cell the number of neighbors with state exactly 1 unit higher than the given cell
@@ -113,7 +116,7 @@ for(i in 1:iterations){
   print(i)
   mat <- update_world(
     mat = mat,
-    rule = "blades",
+    rule = "ex_square",
     depth = depth,
     threshold = threshold,
     M = M
@@ -140,4 +143,4 @@ ggplot(data = df, aes(x = x, y = y, fill = v)) +
     legend.position = "none"
   )
 
-ggsave("vect-neighborhoods/imgs/test_blades-1.png", width = 2000, height = 2000, units = "px", dpi = 300)
+ggsave("vect-neighborhoods/imgs/test_ex-square-1.png", width = 2000, height = 2000, units = "px", dpi = 300)

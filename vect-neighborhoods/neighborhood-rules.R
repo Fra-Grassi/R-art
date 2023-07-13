@@ -47,6 +47,10 @@ neigh_fun <- function(in_mat, rule, n_row, n_col, depth){
   #                 Implementing rule:
   #                 - shift world matrix horizontally from -"depth" to "depth" (excluding 0)
   #                 - for each horizontal shift, apply vertical a vertical shift from the same amount of horizontal shift to "depth", negative for left-shift, positive for right-shift.
+  # - "ex_square":  - neighbors are the cells along the perimeter of a square of length -"depth" to "depth".
+  #                 Implementing rule:
+  #                 - shift world matrix horizontally from -"depth" to "depth" (including 0)
+  #                 - for horizontal shift of + and - "depth", shift cell vertically from -"depth" to "depth". For other horizontal shifts, only shift vertically to -"depth" and to "depth"
   
   # General functions ----
 
@@ -204,20 +208,34 @@ neigh_fun <- function(in_mat, rule, n_row, n_col, depth){
       }
     )
   } else if (rule == "blades") {
-      h_depth_vect <- c(-depth:-1, 1:depth) # vector with horizontal shifts (exclude 0)
-      # For each left-shift, vertical shift is from -value of horizontal shift to -"depth".
-      # For each right-shift, vertical shift is from value of horizontal to "depth".
-      v_depth_vect <- lapply(
-        h_depth_vect,
-        function(x) {
-          if (x < 0) {
-            x:-depth
-          } else if (x > 0) {
-            x:depth
-          }
+    h_depth_vect <- c(-depth:-1, 1:depth) # vector with horizontal shifts (exclude 0)
+    # For each left-shift, vertical shift is from -value of horizontal shift to -"depth".
+    # For each right-shift, vertical shift is from value of horizontal to "depth".
+    v_depth_vect <- lapply(
+      h_depth_vect,
+      function(x) {
+        if (x < 0) {
+          x:-depth
+        } else if (x > 0) {
+          x:depth
         }
-      )
-    }
+      }
+    )
+  } else if (rule == "ex_square") {
+    h_depth_vect <- -depth:depth # vector with horizontal shifts (include 0)
+    # If horizontal shift is == -"depth" or "depth", shift vertically from -"depth" to "depth"
+    # For other horizontal shifts, only shift vertically to -"depth" and "depth".
+    v_depth_vect <- lapply(
+      h_depth_vect,
+      function(x) {
+        if (abs(x) != depth) {
+          c(-depth, depth)
+        } else {
+          -depth:depth
+        }
+      }
+    )
+  }
   
   ## Shift world matrix ----
   
@@ -235,4 +253,4 @@ neigh_fun <- function(in_mat, rule, n_row, n_col, depth){
   
   return(neigh_list)
   
-}
+} 
